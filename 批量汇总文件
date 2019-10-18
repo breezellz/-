@@ -1,0 +1,71 @@
+import xlwings as xw
+import os
+SH_GXD={}                                                    #建立一个空字典,保存葛晓栋审定数
+SH_LYM={}                                                    #建立一个空字典,保存李轶明审定数
+SH_ZSQ={}                                                    #建立一个空字典,保存周树清审定设备费数
+SH_ZSQ_DX={}                                                 #建立一个空字典,保存周树清审定大型设备费数
+
+FILE_GXD_dir = 'E:\\编程类\\测试文档\\葛晓栋'                  #经管部审定数据取数位置，该功能后期为避免代码重复赘余，可以研究函数方式表达
+list_GXD = os.listdir(FILE_GXD_dir)
+for i in range(0,len(list_GXD)):
+    path_GXD = os.path.join(FILE_GXD_dir,list_GXD[i])         #join函数连接
+    if os.path.isfile(path_GXD):                              #判断是一个文件，而非文件夹或者其他
+      app=xw.App(visible=True,add_book=False)
+      wb=app.books.open(path_GXD)
+      sht=wb.sheets['工程款明细']
+      dwm=sht.range('a1').value
+      list1=sht.range('r5:t104').value              
+      SH_GXD[dwm] = list1                                     #字典保存单位名-复制区域值的键值对
+      wb.close()
+      app.quit()
+
+FILE_LYM_dir = 'E:\\编程类\\测试文档\\李轶明'                   #物资部审定数取数位置，该功能后期为避免代码重复赘余，可以研究函数方式表达
+list_LYM = os.listdir(FILE_LYM_dir)
+for i in range(0,len(list_LYM)):
+    path_LYM = os.path.join(FILE_LYM_dir,list_LYM[i])         #join函数连接
+    if os.path.isfile(path_LYM):                              #判断是一个文件，而非文件夹或者其他
+      app=xw.App(visible=True,add_book=False)
+      wb=app.books.open(path_LYM)
+      sht=wb.sheets['材料款明细']
+      dwm=sht.range('a1').value
+      list=sht.range('r5:t204').value              
+      SH_LYM[dwm] = list                                      #字典保存单位名-复制区域值的键值对
+      wb.close()
+      app.quit()      
+
+FILE_ZSQ_dir = 'E:\\编程类\\测试文档\\周树清'                      #机电部审定数取数位置，该功能后期为避免代码重复赘余，可以研究函数方式表达
+list_zqs = os.listdir(FILE_ZSQ_dir)
+for i in range(0,len(list_zqs)):
+    path_ZSQ = os.path.join(FILE_ZSQ_dir,list_zqs[i])             #join函数连接
+    if os.path.isfile(path_ZSQ):                                  #判断是一个文件，而非文件夹或者其他
+      app=xw.App(visible=True,add_book=False)
+      wb=app.books.open(path_ZSQ)
+      sht=wb.sheets['设备费明细']
+      sht1=wb.sheets['支付大型设备（盾构）款']
+      dwm=sht.range('a1').value
+      list=sht.range('r5:t155').value
+      list1=sht1.range('r5:t19').value          
+      SH_ZSQ[dwm] = list                                    #字典保存单位名-复制区域值的键值对
+      SH_ZSQ_DX[dwm]=list1
+      wb.close()
+      app.quit()
+
+hzdir='E:\\编程类\\测试文档\\初审定稿'                         #需粘贴的指向位置，审定汇总所在地
+list_hz = os.listdir(hzdir)
+for i in range(0,len(list_hz)):
+    path_hz = os.path.join(hzdir,list_hz[i])
+    if os.path.isfile(path_hz):
+      app=xw.App(visible=True,add_book=False)
+      wb=app.books.open(path_hz)
+      sht_gxd=wb.sheets['工程款明细']
+      sht_lym=wb.sheets['材料款明细']
+      sht_zsq=wb.sheets['设备费明细']
+      sht_zsq_dx=wb.sheets['支付大型设备（盾构）款']
+      dwm=sht_gxd.range('a1').value
+      sht_gxd.range('r5:t104').value=SH_GXD[dwm]
+      sht_lym.range('r5:t204').value=SH_LYM[dwm]
+      sht_zsq.range('r5:t155').value=SH_ZSQ[dwm]
+      sht_zsq_dx.range('r5:t19').value=SH_ZSQ_DX[dwm]
+      wb.save()
+      wb.close()
+      app.quit()
